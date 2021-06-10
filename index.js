@@ -20,7 +20,7 @@ const keystone = new Keystone({
     maxTotalResults: 1000,
   },
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // Default to true in production
+    secure: true, // Default to true in production
     maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
     sameSite: false,
   },
