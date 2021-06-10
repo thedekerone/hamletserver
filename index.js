@@ -16,8 +16,10 @@ const soundFields = require('./models/sound');
 const keystone = new Keystone({
   adapter: new Adapter(adapterConfig),
   onConnect: process.env.CREATE_TABLES !== 'true' && initialiseData,
-  queryLimits: {
-    maxTotalResults: 1000,
+  cookie : {
+    secure: false, // Defaults to true in production
+    maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+    sameSite: false,
   },
   cookieSecret:"pepega"
 });
