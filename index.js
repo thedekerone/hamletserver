@@ -1,27 +1,33 @@
-const { Keystone } = require('@keystonejs/keystone');
-const { PasswordAuthStrategy } = require('@keystonejs/auth-password');
-const { Text, Checkbox, Password, Relationship,MongoId } = require('@keystonejs/fields');
-const { GraphQLApp } = require('@keystonejs/app-graphql');
-const { AdminUIApp } = require('@keystonejs/app-admin-ui');
-const initialiseData = require('./initial-data');
+const { Keystone } = require("@keystonejs/keystone");
+const { PasswordAuthStrategy } = require("@keystonejs/auth-password");
+const {
+  Text,
+  Checkbox,
+  Password,
+  Relationship,
+  MongoId,
+} = require("@keystonejs/fields");
+const { GraphQLApp } = require("@keystonejs/app-graphql");
+const { AdminUIApp } = require("@keystonejs/app-admin-ui");
+const initialiseData = require("./initial-data");
 
-const { MongooseAdapter: Adapter } = require('@keystonejs/adapter-mongoose');
-const PROJECT_NAME = 'webServer';
+const { MongooseAdapter: Adapter } = require("@keystonejs/adapter-mongoose");
+const PROJECT_NAME = "webServer";
 const adapterConfig = {
   mongoUri:
-    'mongodb+srv://thedekerone:Sx4eXfhJrvKb9TmE@dekker.kvcut.mongodb.net/hamlet',
+    "mongodb+srv://thedekerone:Sx4eXfhJrvKb9TmE@dekker.kvcut.mongodb.net/hamlet",
 };
-const soundFields = require('./models/sound');
+const soundFields = require("./models/sound");
 
 const keystone = new Keystone({
   adapter: new Adapter(adapterConfig),
-  onConnect: process.env.CREATE_TABLES !== 'true' && initialiseData,
-  cookie : {
+  onConnect: process.env.CREATE_TABLES !== "true" && initialiseData,
+  cookie: {
     secure: false, // Defaults to true in production
     maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
     sameSite: false,
   },
-  cookieSecret:"pepega"
+  cookieSecret: "pepega",
 });
 
 // Access control functions
@@ -45,17 +51,22 @@ const userIsAdminOrOwner = (auth) => {
 
 const access = { userIsAdmin, userOwnsItem, userIsAdminOrOwner };
 
-keystone.createList('User', {
+keystone.createList("User", {
   fields: {
     name: { type: Text },
     email: {
       type: Text,
       isUnique: true,
     },
-    sounds:{
-      type:Relationship,
-      ref:'Sound.author',
-      many:true,
+    sounds: {
+      type: Relationship,
+      ref: "Sound.author",
+      many: true,
+    },
+    favoriteSounds: {
+      type: Relationship,
+      ref: "Sound.liking",
+      many: true,
     },
     isAdmin: {
       type: Checkbox,
@@ -78,7 +89,7 @@ keystone.createList('User', {
     auth: true,
   },
 });
-keystone.createList('Sound', {
+keystone.createList("Sound", {
   ...soundFields,
 
   // List-level access controls
@@ -93,8 +104,8 @@ keystone.createList('Sound', {
 
 const authStrategy = keystone.createAuthStrategy({
   type: PasswordAuthStrategy,
-  list: 'User',
-  config: { protectIdentities: process.env.NODE_ENV === 'production' },
+  list: "User",
+  config: { protectIdentities: process.env.NODE_ENV === "production" },
 });
 
 module.exports = {
