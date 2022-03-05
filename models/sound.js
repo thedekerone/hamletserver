@@ -44,7 +44,7 @@ module.exports = {
           if (existingItem && existingItem.file) {
             await fileAdapter.delete(existingItem.file, deleteParams);
           }
-        },
+        },  
       },
       adapter: fileAdapter,
     },

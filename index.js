@@ -15,7 +15,7 @@ const { MongooseAdapter: Adapter } = require("@keystonejs/adapter-mongoose");
 const PROJECT_NAME = "webServer";
 const adapterConfig = {
   mongoUri:
-    "mongodb+srv://thedekerone:Sx4eXfhJrvKb9TmE@dekker.kvcut.mongodb.net/hamlet",
+    "mongodb+srv://thedekerone:internetes@dekker.kvcut.mongodb.net/hamlet",
 };
 const soundFields = require("./models/sound");
 
@@ -23,11 +23,12 @@ const keystone = new Keystone({
   adapter: new Adapter(adapterConfig),
   onConnect: process.env.CREATE_TABLES !== "true" && initialiseData,
   cookie: {
-    secure: false, // Defaults to true in production
-    maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
-    sameSite: false,
+    maxAge: 60 * 60 * 24 * 360,
+    secret: "aeamongol",
   },
-  cookieSecret: "pepega",
+  ui: {
+    isAccessAllowed: () => false,
+  },
 });
 
 // Access control functions
@@ -105,9 +106,11 @@ keystone.createList("Sound", {
 const authStrategy = keystone.createAuthStrategy({
   type: PasswordAuthStrategy,
   list: "User",
-  config: { protectIdentities: process.env.NODE_ENV === "production" },
+  config: {
+    identityField: "email", // default: 'email'
+    secretField: "password", // default: 'password'
+  },
 });
-
 module.exports = {
   keystone,
   apps: [
