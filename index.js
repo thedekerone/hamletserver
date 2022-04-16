@@ -23,9 +23,13 @@ const keystone = new Keystone({
   adapter: new Adapter(adapterConfig),
   onConnect: process.env.CREATE_TABLES !== "true" && initialiseData,
   cookie: {
+    secure: process.env.NODE_ENV === "production", // Defaults to true in production
+
     maxAge: 60 * 60 * 24 * 360,
     secret: "aeamongol",
+    sameSite: false,
   },
+  cookieSecret: "aeamongol",
   ui: {
     isAccessAllowed: () => false,
   },
